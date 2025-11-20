@@ -1,0 +1,108 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Data files (文献数据不上传到GitHub)
+*.xls
+*.xlsx
+!requirements.txt
+
+# Output files (生成的结果文件)
+literature_screening_results.xlsx
+literature_analysis_results.xlsx
+literature_research_report.md
+*_results.xlsx
+*_results.json
+*_report.md
+*_records.xlsx
+
+# Data directory (all data files)
+data/
+pdfs/
+pdf_images/
+*.csv
+!requirements.txt
+
+# Stage 2 outputs
+pdf_download_records.xlsx
+deep_analysis_results.xlsx
+deep_analysis_results.json
+
+# Test outputs
+test_pdfs/
+test_mixed_pdfs/
+debug_pdfs/
+test_enhanced_pdfs/
+
+# Debug files
+debug_*.py
+debug_*.html
+debug_*.json
+
+# Logs
+*.log
+logs/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
