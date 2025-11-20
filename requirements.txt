@@ -19,13 +19,13 @@ PyMuPDF>=1.23.0  # fitz，用于PDF图片提取
 # 可选依赖（推荐安装）
 tqdm>=4.65.0  # 进度条显示
 
+# 系统依赖说明（需要单独安装）
+# - poppler-utils (用于pdf2image)
+#   macOS: brew install poppler
+#   Ubuntu: sudo apt-get install poppler-utils
+#   Windows: 下载 poppler 并添加到PATH
+
 # 开发依赖（可选）
 # pytest>=7.4.0  # 测试框架
 # black>=23.0.0  # 代码格式化
 # flake8>=6.0.0  # 代码检查
-
-# 注意：
-# - pdf2image 需要系统安装 poppler-utils
-#   macOS: brew install poppler
-#   Ubuntu: sudo apt-get install poppler-utils
-#   Windows: 下载 poppler 并添加到PATH

@@ -67,5 +67,5 @@
 ## 反馈
 
 如有建议或问题，请：
-- 提交 [GitHub Issue](https://github.com/yourusername/literature_agent/issues)
-- 发送邮件到 your@email.com
+- 提交 [GitHub Issue](https://github.com/YuanyuanMa03/literature_agent/issues)
+- 发送邮件到 yym290552@gmail.com,2025101184@stu.njau.edu.cn

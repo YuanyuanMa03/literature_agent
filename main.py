@@ -2,20 +2,20 @@
 # -*- coding: utf-8 -*-
 """
 文献分析Agent系统 - 增强版主程序
-参考第十四章深度研究助手架构
 """
 
 import os
 import pandas as pd
 from pathlib import Path
-from dotenv import load_dotenv
+from dotenv import load_dotenv 
 
-from core.llm import LiteratureLLM
-from core.progress_tracker import ProgressTracker
-from agents.planning_agent import ResearchPlanningAgent
-from agents.screening_agent import LiteratureScreeningAgent
-from agents.analysis_agent import LiteratureAnalysisAgent
-from agents.report_agent import LiteratureReportAgent
+from core.llm import LiteratureLLM # 导入LLM模型
+from core.progress_tracker import ProgressTracker # 导入进度追踪器
+from agents.planning_agent import ResearchPlanningAgent # 导入规划Agent
+from agents.data_preprocessing_agent import DataPreprocessingAgent # 导入数据预处理Agent
+from agents.screening_agent import LiteratureScreeningAgent # 导入筛选Agent
+from agents.analysis_agent import LiteratureAnalysisAgent # 导入分析Agent
+from agents.report_agent import LiteratureReportAgent # 导入报告Agent
 
 load_dotenv()
 
@@ -24,7 +24,7 @@ class LiteratureResearchSystem:
     """
     文献研究系统 - TODO驱动的研究范式（增强版）
     
-    参考第十四章架构：
+    - 数据预处理Agent：处理原始WOS数据，生成标准格式
     - 规划Agent：分解研究任务
     - 筛选Agent：智能筛选文献
     - 分析Agent：深度提取数据
@@ -43,7 +43,6 @@ class LiteratureResearchSystem:
         """
         print("="*70)
         print("🔬 文献分析Agent系统 - Enhanced Edition")
-        print("   基于第十四章TODO驱动研究范式")
         print("="*70)
         
         # 初始化LLM
@@ -56,12 +55,13 @@ class LiteratureResearchSystem:
         self.progress = ProgressTracker() if enable_progress_tracking else None
         
         # 初始化Agents
+        self.preprocessing_agent = DataPreprocessingAgent(self.llm)
         self.planning_agent = ResearchPlanningAgent(self.llm)
         self.screening_agent = LiteratureScreeningAgent(self.llm)
         self.analysis_agent = LiteratureAnalysisAgent(self.llm)
         self.report_agent = LiteratureReportAgent(self.llm)
         
-        print("\n✅ 系统初始化完成（包含4个专业Agent）\n")
+        print("\n✅ 系统初始化完成（包含5个专业Agent）\n")
     
     def load_literature(
         self,
@@ -223,7 +223,47 @@ class LiteratureResearchSystem:
         if self.progress:
             self.progress.start_tracking()
         
-        # STEP 0: 规划研究任务（可选）
+        # STEP 0: 数据预处理（新增）
+        print("\n【STEP 0/5】数据预处理")
+        if self.progress:
+            self.progress.add_task('preprocessing', {
+                'title': '数据预处理',
+                'goal': '处理原始WOS数据，生成标准格式',
+                'priority': 'high'
+            })
+            self.progress.start_task('preprocessing')
+        
+        try:
+            # 检查是否已有处理好的数据
+            processed_data_path = 'data/literature_data_processed.csv'
+            if Path(processed_data_path).exists():
+                print("  📁 发现已处理的数据，直接加载...")
+                df = pd.read_csv(processed_data_path)
+                print(f"  ✅ 加载完成: {len(df)} 篇文献")
+            else:
+                print("  🔧 开始数据预处理...")
+                preprocessing_result = self.preprocessing_agent.run(
+                    input_source="auto",
+                    output_dir="data",
+                    output_filename="literature_data_processed.csv"
+                )
+                
+                if not preprocessing_result["success"]:
+                    raise Exception(f"数据预处理失败: {preprocessing_result['error']}")
+                
+                df = pd.read_csv(preprocessing_result["output_file"])
+                print(f"  ✅ 预处理完成: {len(df)} 篇文献")
+            
+            if self.progress:
+                self.progress.complete_task('preprocessing', f"{len(df)} 篇文献")
+        
+        except Exception as e:
+            print(f"❌ 数据预处理失败: {e}")
+            if self.progress:
+                self.progress.fail_task('preprocessing', str(e))
+            raise
+        
+        # STEP 1: 规划研究任务（可选）
         if enable_planning:
             print("\n【STEP 0/4】研究规划")
             if self.progress:
@@ -249,23 +289,13 @@ class LiteratureResearchSystem:
                 if self.progress:
                     self.progress.fail_task('planning', str(e))
         
-        # STEP 1: 加载数据
-        print("\n【STEP 1/4】加载文献数据")
-        if self.progress:
-            self.progress.add_task('load', {
-                'title': '文献数据加载',
-                'goal': '加载并合并所有文献文件',
-                'priority': 'high'
-            })
-        
-        df = self.load_literature(task_id='load')
-        
+        # 应用测试模式（如果启用）
         if test_mode:
             print(f"\n⚠️  测试模式：只处理前 {test_size} 篇")
             df = df.head(test_size)
         
         # STEP 2: 筛选文献
-        print("\n【STEP 2/4】智能筛选文献")
+        print("\n【STEP 2/5】智能筛选文献")
         if self.progress:
             self.progress.add_task('screening', {
                 'title': '智能筛选文献',
@@ -296,7 +326,7 @@ class LiteratureResearchSystem:
             raise
         
         # STEP 3: 分析文献
-        print("\n【STEP 3/4】深度分析文献")
+        print("\n【STEP 3/5】深度分析文献")
         if self.progress:
             self.progress.add_task('analysis', {
                 'title': '深度分析文献',
@@ -327,7 +357,7 @@ class LiteratureResearchSystem:
             raise
         
         # STEP 4: 生成报告
-        print("\n【STEP 4/4】生成研究报告")
+        print("\n【STEP 4/5】生成研究报告")
         if self.progress:
             self.progress.add_task('report', {
                 'title': '生成研究报告',
